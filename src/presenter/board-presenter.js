@@ -9,8 +9,9 @@ const POINTS_COUNT = 3;
 
 export default class BoardPresenter {
   pointsListComponent = new PointsListView();
+  mainContainer = null;
 
-  constructor(mainContainer) {
+  constructor({boardContainer: mainContainer}) {
     this.mainContainer = mainContainer;
   }
 
