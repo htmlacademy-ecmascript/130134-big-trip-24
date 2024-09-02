@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-const DATE_FORMAT = 'MMM D';
+const DATE_FORMAT = 'DD/MM/YYYY/ HH:mm';
 
 function getRandomInt(min = 0, max = 500) {
   const minCeiled = Math.ceil(min);

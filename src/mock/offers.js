@@ -111,4 +111,8 @@ const mockOffers = [
   },
 ];
 
-export { mockOffers };
+function getMockOffers() {
+  return mockOffers;
+}
+
+export { getMockOffers };
