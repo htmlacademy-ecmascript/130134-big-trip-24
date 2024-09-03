@@ -12,8 +12,8 @@ function getRandomArrayElement(items) {
   return items[getRandomInt(0, items.length)];
 }
 
-function humanizeDate(pointDate) {
-  return pointDate ? dayjs(pointDate).format(DATE_FORMAT) : '';
+function humanizeDate(pointDate, dateFormat) {
+  return pointDate ? dayjs(pointDate).format(dateFormat) : 'xxx';
 }
 
 export { getRandomArrayElement, getRandomInt, humanizeDate };

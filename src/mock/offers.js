@@ -1,6 +1,6 @@
 const mockOffers = [
   {
-    type: 'Taxi',
+    type: 'taxi',
     offers: [
       {
         id: 1,
@@ -75,7 +75,7 @@ const mockOffers = [
     ],
   },
   {
-    type: 'check-in',
+    type: 'checkIn',
     offers: [
       {
         id: 1,
