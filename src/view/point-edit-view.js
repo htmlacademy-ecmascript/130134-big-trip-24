@@ -17,12 +17,8 @@ const BLANK_POINT = {
 function createPointTypeTemplate(type) {
   return POINT_TYPE.reduce((acc, pointType) => {
     const pointItem = `<div class="event__type-item">
-        <input id="event-type-${pointType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${pointType}" ${
-      pointType === type ? 'checked' : ''
-    }>
-        <label class="event__type-label  event__type-label--${pointType}" for="event-type-${pointType}-1">${getCapitalizedPointType(
-      pointType
-    )}</label>
+        <input id="event-type-${pointType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${pointType}" ${pointType === type ? 'checked' : ''}>
+        <label class="event__type-label  event__type-label--${pointType}" for="event-type-${pointType}-1">${getCapitalizedPointType(pointType)}</label>
       </div>`;
 
     return acc + pointItem;
@@ -50,14 +46,8 @@ function createControlButtonsTemplate(isEdit) {
 function createOffersList(offers, pointOffers) {
   return offers.reduce((acc, offer) => {
     const offerItem = `<div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${
-                offer.name
-              }-1" type="checkbox" name="event-offer-${offer.name}" ${
-      pointOffers.includes(offer.id) ? 'checked' : ''
-    }>
-              <label class="event__offer-label" for="event-offer-${
-                offer.name
-              }-1">
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.name}-1" type="checkbox" name="event-offer-${offer.name}" ${pointOffers.includes(offer.id) ? 'checked' : ''}>
+              <label class="event__offer-label" for="event-offer-${offer.name}-1">
                 <span class="event__offer-title">${offer.title}</span>
                 &plus;&euro;&nbsp;
                 <span class="event__offer-price">${offer.price}</span>
@@ -107,9 +97,7 @@ function createDestinationTemplate(destinations, pointDestination) {
   if (destination) {
     return `<section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-              <p class="event__destination-description">${
-                destination.description
-              }</p>
+              <p class="event__destination-description">${destination.description}</p>
               ${createPhotosTemplate(destination.fotos)}
             </section>`;
   }
