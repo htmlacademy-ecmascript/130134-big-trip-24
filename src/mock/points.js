@@ -26,7 +26,7 @@ const mockPoints = [
     price: getRandomInt(),
     isEdit: false,
     isFavorite: false,
-    offers: [1, 2, 3],
+    offers: [1, 2],
   },
   {
     id: 3,

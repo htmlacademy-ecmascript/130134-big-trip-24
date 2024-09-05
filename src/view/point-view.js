@@ -1,5 +1,5 @@
 import { createElement } from '../render.js';
-import { humanizeDate } from '../utils.js';
+import { getCapitalizedPointType, humanizeDate } from '../utils.js';
 import dayjs from 'dayjs';
 
 function getTimeDuration(duration, days, hours, minutes) {
@@ -14,6 +14,7 @@ function getTimeDuration(duration, days, hours, minutes) {
 }
 
 function createPointTemplate(point, offers) {
+  const capitalizedPointType = getCapitalizedPointType(point.type);
   const isFavoriteClass = 'event__favorite-btn--active';
   const dateStartDay = humanizeDate(point.dateStart, 'YYYY-MM-DD');
   const dateStartDayShowed = humanizeDate(point.dateStart, 'MMM D');
@@ -36,7 +37,7 @@ function createPointTemplate(point, offers) {
     if (pointOffersList.length) {
       return pointOffersList.reduce((acc, offer) => {
         const item = `<li class="event__offer">
-                <span class="event__offer-title">${offer.name}</span>
+                <span class="event__offer-title">${offer.title}</span>
                 &plus;&euro;&nbsp;
                 <span class="event__offer-price">${offer.price}</span>
               </li>`;
@@ -48,17 +49,13 @@ function createPointTemplate(point, offers) {
     return '';
   }
 
-  function getCapitalizedPointType() {
-    return point.type[0].toUpperCase() + point.type.slice(1);
-  }
-
   return `<li class="trip-events__item">
       <div class="event">
         <time class="event__date" datetime="${dateStartDay}">${dateStartDayShowed}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${point.type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${getCapitalizedPointType()} ${point.destination}</h3>
+        <h3 class="event__title">${capitalizedPointType} ${point.destination}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dateStartTime}">${dateStartTimeShowed}</time>
@@ -88,7 +85,7 @@ function createPointTemplate(point, offers) {
 }
 
 export default class PointView {
-  constructor(point, offers) {
+  constructor({point, offers}) {
     this.point = point;
     this.offers = offers;
   }

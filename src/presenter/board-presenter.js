@@ -6,8 +6,8 @@ import PointEditView from '../view/point-edit-view.js';
 import { getMockDestinations } from '../mock/destinations.js';
 import { getMockOffers } from '../mock/offers.js';
 
-const mockDestinations = getMockDestinations();
-const mockOffers = getMockOffers();
+const destinations = getMockDestinations();
+const offers = getMockOffers();
 
 export default class BoardPresenter {
   pointsListComponent = new PointsListView();
@@ -25,13 +25,13 @@ export default class BoardPresenter {
     render(new SortView(), this.mainContainer);
     render(this.pointsListComponent, this.mainContainer);
     render(
-      new PointEditView(this.points[0], mockOffers, mockDestinations),
+      new PointEditView({ point: this.points[40], offers, destinations }),
       this.pointsListComponent.getElement()
     );
 
     this.points.forEach((point) => {
       render(
-        new PointView(point, mockOffers),
+        new PointView({ point: point, offers: offers }),
         this.pointsListComponent.getElement()
       );
     });

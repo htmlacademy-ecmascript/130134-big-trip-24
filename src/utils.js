@@ -10,8 +10,17 @@ function getRandomArrayElement(items) {
   return items[getRandomInt(0, items.length)];
 }
 
-function humanizeDate(pointDate, dateFormat) {
-  return pointDate ? dayjs(pointDate).format(dateFormat) : 'xxx';
+function getCapitalizedPointType(pointType) {
+  return pointType ? pointType[0].toUpperCase() + pointType.slice(1) : '';
 }
 
-export { getRandomArrayElement, getRandomInt, humanizeDate };
+function humanizeDate(pointDate, dateFormat) {
+  return pointDate ? dayjs(pointDate).format(dateFormat) : '';
+}
+
+export {
+  getRandomArrayElement,
+  getRandomInt,
+  humanizeDate,
+  getCapitalizedPointType,
+};
