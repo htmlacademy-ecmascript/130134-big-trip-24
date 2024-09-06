@@ -3,8 +3,7 @@ const mockOffers = [
     type: 'taxi',
     offers: [
       {
-        id: 1,
-        name: 'comfort',
+        id: 'comfort',
         title: 'Switch to comfort class',
         price: 5,
       },
@@ -14,8 +13,7 @@ const mockOffers = [
     type: 'bus',
     offers: [
       {
-        id: 1,
-        name: 'seats',
+        id: 'seats',
         title: 'Choose seats',
         price: 3,
       },
@@ -25,14 +23,12 @@ const mockOffers = [
     type: 'train',
     offers: [
       {
-        id: 1,
-        name: 'luggage',
+        id: 'luggage',
         title: 'Add luggage',
         price: 30,
       },
       {
-        id: 2,
-        name: 'meal',
+        id: 'meal',
         title: 'Add meal',
         price: 10,
       },
@@ -40,21 +36,13 @@ const mockOffers = [
   },
   {
     type: 'ship',
-    offers: [
-      {
-        id: 1,
-        name: 'seats',
-        title: 'Choose seats',
-        price: 3,
-      },
-    ],
+    offers: [],
   },
   {
     type: 'drive',
     offers: [
       {
-        id: 1,
-        name: 'comfort',
+        id: 'comfort',
         title: 'Switch to comfort class',
         price: 5,
       },
@@ -64,20 +52,17 @@ const mockOffers = [
     type: 'flight',
     offers: [
       {
-        id: 1,
-        name: 'luggage',
+        id: 'luggage',
         title: 'Add luggage',
         price: 30,
       },
       {
-        id: 2,
-        name: 'meal',
+        id: 'meal',
         title: 'Add meal',
         price: 10,
       },
       {
-        id: 3,
-        name: 'seats',
+        id: 'seats',
         title: 'Choose seats',
         price: 3,
       },
@@ -87,14 +72,12 @@ const mockOffers = [
     type: 'checkIn',
     offers: [
       {
-        id: 1,
-        name: 'breakfast',
+        id: 'breakfast',
         title: 'Add breakfast',
         price: 7,
       },
       {
-        id: 2,
-        name: 'time',
+        id: 'time',
         title: 'Choose time',
         price: 5,
       },
@@ -104,8 +87,7 @@ const mockOffers = [
     type: 'sightseeing',
     offers: [
       {
-        id: 1,
-        name: 'guide',
+        id: 'guide',
         title: 'Take guide',
         price: 15,
       },
@@ -115,10 +97,9 @@ const mockOffers = [
     type: 'restaurant',
     offers: [
       {
-        id: 1,
-        name: 'table',
+        id: 'table',
         title: 'Choose table',
-        price: 5,
+        price: 120,
       },
     ],
   },

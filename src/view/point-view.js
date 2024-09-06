@@ -13,7 +13,7 @@ function getTimeDuration(duration, days, hours, minutes) {
   return `${days.toString().padStart(2, '0')}D ${hours.toString().padStart(2, '0')}H ${minutes.toString().padStart(2, '0')}M`;
 }
 
-function createPointTemplate(point, offers) {
+function createPointTemplate(point, offers, destinations) {
   const capitalizedPointType = getCapitalizedPointType(point.type);
   const isFavoriteClass = 'event__favorite-btn--active';
   const dateStartDay = humanizeDate(point.dateStart, 'YYYY-MM-DD');
@@ -85,13 +85,14 @@ function createPointTemplate(point, offers) {
 }
 
 export default class PointView {
-  constructor({point, offers}) {
+  constructor({point, offers, destinations}) {
     this.point = point;
     this.offers = offers;
+    this.destinations = destinations;
   }
 
   getTemplate() {
-    return createPointTemplate(this.point, this.offers);
+    return createPointTemplate(this.point, this.offers, this.destinations);
   }
 
   getElement() {
