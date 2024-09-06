@@ -15,14 +15,8 @@ const BLANK_POINT = {
 function createPointTypesTemplate(type, offers) {
   return offers.reduce((acc, pointType) => {
     const pointItem = `<div class="event__type-item">
-        <input id="event-type-${
-          pointType.type
-        }-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${
-      pointType.type
-    }" ${pointType.type === type ? 'checked' : ''}>
-        <label class="event__type-label  event__type-label--${pointType.type}" for="event-type-${
-      pointType.type
-    }-1">${getCapitalizedPointType(pointType.type)}</label>
+        <input id="event-type-${pointType.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${pointType.type}" ${pointType.type === type ? 'checked' : ''}>
+        <label class="event__type-label  event__type-label--${pointType.type}" for="event-type-${pointType.type}-1">${getCapitalizedPointType(pointType.type)}</label>
       </div>`;
 
     return acc + pointItem;
@@ -48,11 +42,7 @@ function createControlButtonsTemplate(pointId) {
 function createOffersList(offers, pointOffers) {
   return offers.reduce((acc, offer) => {
     const offerItem = `<div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${
-                offer.id
-              }-1" type="checkbox" name="event-offer-${offer.id}" ${
-      pointOffers.includes(offer.id) ? 'checked' : ''
-    }>
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}-1" type="checkbox" name="event-offer-${offer.id}" ${pointOffers.includes(offer.id) ? 'checked' : ''}>
               <label class="event__offer-label" for="event-offer-${offer.id}-1">
                 <span class="event__offer-title">${offer.title}</span>
                 &plus;&euro;&nbsp;
@@ -135,9 +125,7 @@ function createEditPointTemplate(point, offers, destinations) {
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${
-                point.type
-              }.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${point.type}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -172,9 +160,7 @@ function createEditPointTemplate(point, offers, destinations) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${
-              point.base_price
-            }">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.base_price}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>

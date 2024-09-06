@@ -9,7 +9,7 @@ const mockPoints = [
     'base_price': getRandomInt(),
     'date_from': new Date('2024-12-10 12:00'),
     'date_to': new Date('2024-12-11 13:11'),
-    'destination': '',
+    'destination': 1,
     'is_favorite': false,
     'offers': ['seats', 'comfort', 'luggage'],
     'type': getRandomArrayElement(POINT_TYPE),
