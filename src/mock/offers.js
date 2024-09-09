@@ -3,7 +3,7 @@ const mockOffers = [
     type: 'taxi',
     offers: [
       {
-        id: 'comfort',
+        id: '1a',
         title: 'Switch to comfort class',
         price: 5,
       },
@@ -13,7 +13,7 @@ const mockOffers = [
     type: 'bus',
     offers: [
       {
-        id: 'seats',
+        id: '2a',
         title: 'Choose seats',
         price: 3,
       },
@@ -23,12 +23,12 @@ const mockOffers = [
     type: 'train',
     offers: [
       {
-        id: 'luggage',
+        id: '3a',
         title: 'Add luggage',
         price: 30,
       },
       {
-        id: 'meal',
+        id: '4a',
         title: 'Add meal',
         price: 10,
       },
@@ -42,7 +42,7 @@ const mockOffers = [
     type: 'drive',
     offers: [
       {
-        id: 'comfort',
+        id: '1a',
         title: 'Switch to comfort class',
         price: 5,
       },
@@ -52,17 +52,17 @@ const mockOffers = [
     type: 'flight',
     offers: [
       {
-        id: 'luggage',
+        id: '3a',
         title: 'Add luggage',
         price: 30,
       },
       {
-        id: 'meal',
+        id: '4a',
         title: 'Add meal',
         price: 10,
       },
       {
-        id: 'seats',
+        id: '2a',
         title: 'Choose seats',
         price: 3,
       },
@@ -72,12 +72,12 @@ const mockOffers = [
     type: 'checkIn',
     offers: [
       {
-        id: 'breakfast',
+        id: '5a',
         title: 'Add breakfast',
         price: 7,
       },
       {
-        id: 'time',
+        id: '6a',
         title: 'Choose time',
         price: 5,
       },
@@ -87,7 +87,7 @@ const mockOffers = [
     type: 'sightseeing',
     offers: [
       {
-        id: 'guide',
+        id: '7a',
         title: 'Take guide',
         price: 15,
       },
@@ -97,7 +97,7 @@ const mockOffers = [
     type: 'restaurant',
     offers: [
       {
-        id: 'table',
+        id: '8a',
         title: 'Choose table',
         price: 120,
       },

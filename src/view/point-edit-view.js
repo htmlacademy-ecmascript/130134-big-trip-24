@@ -56,39 +56,39 @@ function createOffersList(offers, pointOffers) {
 function createOffersTemplate(offers, point) {
   const pointOffersItems = offers.find((offer) => offer.type === point.type);
 
-  if (pointOffersItems.offers.length > 0) {
-    return `<section class="event__section  event__section--offers">
+  if (pointOffersItems.offers.length === 0) {
+    return '';
+  }
+
+  return `<section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
             <div class="event__available-offers">
               ${createOffersList(pointOffersItems.offers, point.offers)}
             </div>
           </section>`;
-  }
-
-  return '';
 }
 
 function createPhotosTemplate(photos) {
-  if (photos.length > 0) {
-    const photoItems = photos.reduce((acc, photoItem) => {
-      const photosList = `<img class="event__photo" src="${photoItem.src}" alt="Event photo">`;
-      return acc + photosList;
-    }, '');
-
-    return `<div class="event__photos-container">
-        <div class="event__photos-tape">
-          ${photoItems}
-        </div>
-      </div>`;
+  if (photos.length === 0) {
+    return '';
   }
 
-  return '';
+  const photoItems = photos.reduce((acc, photoItem) => {
+    const photosList = `<img class="event__photo" src="${photoItem.src}" alt="Event photo">`;
+    return acc + photosList;
+  }, '');
+
+  return `<div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${photoItems}
+      </div>
+    </div>`;
 }
 
 function createDestinationTemplate(destinations, pointDestination) {
   const destinationItem = destinations.find((destination) => destination.id === pointDestination);
 
-  if (typeof destinationItem !== 'undefined') {
+  if (!!destinationItem !== 'undefined') {
     return `<section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
               <p class="event__destination-description">${destinationItem.description}</p>

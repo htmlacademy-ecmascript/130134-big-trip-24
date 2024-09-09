@@ -11,7 +11,7 @@ const mockPoints = [
     'date_to': new Date('2024-12-11 13:11'),
     'destination': 1,
     'is_favorite': false,
-    'offers': ['seats', 'comfort', 'luggage'],
+    'offers': ['2a', '1a', '4a'],
     'type': getRandomArrayElement(POINT_TYPE),
   },
   {
@@ -21,7 +21,7 @@ const mockPoints = [
     'date_to': new Date('2024-12-1 10:10'),
     'destination': 2,
     'is_favorite': false,
-    'offers': ['seats', 'comfort', 'luggage'],
+    'offers': ['2a', '1a', '3a'],
     'type': 'flight',
   },
   {
@@ -31,7 +31,7 @@ const mockPoints = [
     'date_to': new Date('2024-11-11 13:00'),
     'destination': 3,
     'is_favorite': true,
-    'offers': ['seats', 'comfort', 'luggage'],
+    'offers': ['2a', '5a', '8a'],
     'type': getRandomArrayElement(POINT_TYPE),
   },
   {
@@ -41,7 +41,7 @@ const mockPoints = [
     'date_to': new Date('2024-12-12 21:35'),
     'destination': 4,
     'is_favorite': false,
-    'offers': ['seats', 'comfort', 'luggage'],
+    'offers': ['2a', '1a', '3a', '6a', '7a'],
     'type': getRandomArrayElement(POINT_TYPE),
   },
   {
@@ -51,7 +51,7 @@ const mockPoints = [
     'date_to': new Date('2024-11-01 23:05'),
     'destination': 5,
     'is_favorite': true,
-    'offers': ['seats', 'comfort'],
+    'offers': ['2a', '1a'],
     'type': getRandomArrayElement(POINT_TYPE),
   },
 ];
