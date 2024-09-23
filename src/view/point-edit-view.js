@@ -176,9 +176,9 @@ function createEditPointTemplate(point, offers, destinations) {
 }
 
 export default class PointEditView extends AbstractView {
-  #point = null;
-  #offers = null;
-  #destinations = null;
+  #point = [];
+  #offers = [];
+  #destinations = [];
   #handleFormSubmit = null;
   #handleCloseClick = null;
 
@@ -190,8 +190,10 @@ export default class PointEditView extends AbstractView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handleCloseClick = onCloseClick;
 
-    this.element.querySelector('form.event').addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+    if (this.#point.id !== null) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    }
   }
 
   get template() {
