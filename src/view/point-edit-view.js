@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view';
 import { getCapitalizedPointType, humanizeDate } from '../utils.js';
 
 const BLANK_POINT = {
@@ -175,26 +175,15 @@ function createEditPointTemplate(point, offers, destinations) {
     </li>`;
 }
 
-export default class PointEditView {
+export default class PointEditView extends AbstractView {
   constructor({ point = BLANK_POINT, offers, destinations }) {
+    super();
     this.point = point;
     this.offers = offers;
     this.destinations = destinations;
   }
 
-  getTemplate() {
+  get template() {
     return createEditPointTemplate(this.point, this.offers, this.destinations);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
