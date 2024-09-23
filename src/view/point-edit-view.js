@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view';
 import { getCapitalizedPointType, humanizeDate } from '../utils.js';
 
 const BLANK_POINT = {
@@ -175,26 +175,38 @@ function createEditPointTemplate(point, offers, destinations) {
     </li>`;
 }
 
-export default class PointEditView {
-  constructor({ point = BLANK_POINT, offers, destinations }) {
-    this.point = point;
-    this.offers = offers;
-    this.destinations = destinations;
-  }
+export default class PointEditView extends AbstractView {
+  #point = [];
+  #offers = [];
+  #destinations = [];
+  #handleFormSubmit = null;
+  #handleCloseClick = null;
 
-  getTemplate() {
-    return createEditPointTemplate(this.point, this.offers, this.destinations);
-  }
+  constructor({ point = BLANK_POINT, offers, destinations, onFormSubmit, onCloseClick }) {
+    super();
+    this.#point = point;
+    this.#offers = offers;
+    this.#destinations = destinations;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleCloseClick = onCloseClick;
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+    if (this.#point.id !== null) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     }
-
-    return this.element;
   }
 
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createEditPointTemplate(this.#point, this.#offers, this.#destinations);
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
+
+  #closeClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleCloseClick();
+  };
 }

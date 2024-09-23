@@ -10,7 +10,8 @@ module.exports = {
     clean: true, // Удаляем предыдущую сборку перед созданием новой
   },
   devtool: 'source-map', // Генерируем карту исходного кода
-  plugins: [ // Подключаем плагины
+  plugins: [
+    // Подключаем плагины
     new HtmlWebpackPlugin({
       template: 'public/index.html',
     }),
@@ -26,16 +27,21 @@ module.exports = {
     }),
   ],
   module: {
-    rules: [ // Добавляем лоадеры
+    rules: [
+      // Добавляем лоадеры
       {
         test: /\.js$/,
         exclude: /(node_modules)/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
+            presets: ['@babel/preset-env'],
           },
         },
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
       },
     ],
   },
