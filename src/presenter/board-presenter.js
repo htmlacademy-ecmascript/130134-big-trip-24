@@ -1,4 +1,5 @@
 import { render, replace } from '../framework/render.js';
+import NoPointView from '../view/no-point-view.js';
 import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import PointView from '../view/point-view.js';
@@ -27,6 +28,10 @@ export default class BoardPresenter {
   }
 
   #renderBoard() {
+    if (this.#points.length === 0) {
+      render(new NoPointView(), this.#mainContainer);
+      return;
+    }
     render(new SortView(), this.#mainContainer);
     render(this.#pointsListComponent, this.#mainContainer);
 

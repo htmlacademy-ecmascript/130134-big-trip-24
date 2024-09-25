@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import { getCapitalizedPointType, humanizeDate } from '../utils.js';
+import { getCapitalizedValue, humanizeDate } from '../utils/common.js';
 
 const BLANK_POINT = {
   'id': null,
@@ -16,7 +16,7 @@ function createPointTypesTemplate(type, offers) {
   return offers.reduce((acc, pointType) => {
     const pointItem = `<div class="event__type-item">
         <input id="event-type-${pointType.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${pointType.type}" ${pointType.type === type ? 'checked' : ''}>
-        <label class="event__type-label  event__type-label--${pointType.type}" for="event-type-${pointType.type}-1">${getCapitalizedPointType(pointType.type)}</label>
+        <label class="event__type-label  event__type-label--${pointType.type}" for="event-type-${pointType.type}-1">${getCapitalizedValue(pointType.type)}</label>
       </div>`;
 
     return acc + pointItem;
@@ -25,7 +25,7 @@ function createPointTypesTemplate(type, offers) {
 
 function createDestinationsListTemplate(destinations) {
   return destinations.reduce((acc, destination) => {
-    const destinationOption = `<option value="${getCapitalizedPointType(destination.name)}"></option>`;
+    const destinationOption = `<option value="${getCapitalizedValue(destination.name)}"></option>`;
     return acc + destinationOption;
   }, '');
 }
@@ -103,7 +103,7 @@ function getPointName(destinations, pointDestination) {
   const destinationItem = destinations.find((destination) => destination.id === pointDestination);
 
   if (typeof destinationItem !== 'undefined') {
-    return getCapitalizedPointType(destinationItem.name);
+    return getCapitalizedValue(destinationItem.name);
   }
 
   return '';
@@ -139,7 +139,7 @@ function createEditPointTemplate(point, offers, destinations) {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${getCapitalizedPointType(point.type)}
+              ${getCapitalizedValue(point.type)}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointName}" list="destination-list-1">
             <datalist id="destination-list-1">

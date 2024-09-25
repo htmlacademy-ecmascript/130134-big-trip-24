@@ -1,4 +1,4 @@
-import { getRandomArrayElement, getRandomInt } from '../utils.js';
+import { getRandomArrayElement, getRandomInt } from '../utils/common.js';
 import { POINT_TYPE } from '../const.js';
 
 const POINTS_COUNT = 5;
@@ -17,7 +17,7 @@ const mockPoints = [
   {
     'id': 2,
     'base_price': getRandomInt(),
-    'date_from': new Date('2024-11-25 15:00'),
+    'date_from': new Date('2024-9-25 12:10'),
     'date_to': new Date('2024-12-1 10:10'),
     'destination': 2,
     'is_favorite': false,
@@ -27,8 +27,8 @@ const mockPoints = [
   {
     'id': 3,
     'base_price': getRandomInt(),
-    'date_from': new Date('2024-11-10 15:30'),
-    'date_to': new Date('2024-11-11 13:00'),
+    'date_from': new Date('2024-08-10 15:30'),
+    'date_to': new Date('2024-09-11 13:00'),
     'destination': 3,
     'is_favorite': true,
     'offers': ['2a', '5a', '8a'],
