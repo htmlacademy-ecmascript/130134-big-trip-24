@@ -12,8 +12,8 @@ const boardPresenter = new BoardPresenter({
   pointsModel,
 });
 
-const filter = generateFilter(pointsModel.points);
+const filters = generateFilter(pointsModel.points);
 
-render(new FilterView({ filter }), filtersElement);
+render(new FilterView({ filters }), filtersElement);
 
 boardPresenter.init();
