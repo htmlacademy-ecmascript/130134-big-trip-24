@@ -26,4 +26,11 @@ const DESCRIPTION =
     '. '
   );
 
-export { POINT_TYPE, DESCRIPTION, CITIES };
+const FilterType = {
+  'EVERYTHING':'everything',
+  'FUTURE':'future',
+  'PRESENT':'present',
+  'PAST':'past'
+};
+
+export { POINT_TYPE, DESCRIPTION, CITIES, FilterType };

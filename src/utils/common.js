@@ -10,8 +10,8 @@ function getRandomArrayElement(items) {
   return items[getRandomInt(0, items.length)];
 }
 
-function getCapitalizedPointType(pointType) {
-  return pointType ? pointType[0].toUpperCase() + pointType.slice(1) : '';
+function getCapitalizedValue(anyValue) {
+  return anyValue ? anyValue[0].toUpperCase() + anyValue.slice(1) : '';
 }
 
 function humanizeDate(pointDate, dateFormat) {
@@ -36,4 +36,4 @@ function getTimeDuration(startTime, endTime) {
     .padStart(2, '0')}M`;
 }
 
-export { getRandomArrayElement, getRandomInt, humanizeDate, getCapitalizedPointType, getTimeDuration };
+export { getRandomArrayElement, getRandomInt, humanizeDate, getCapitalizedValue, getTimeDuration };

@@ -1,10 +1,10 @@
 import AbstractView from '../framework/view/abstract-view';
-import { getCapitalizedPointType, humanizeDate, getTimeDuration } from '../utils.js';
+import { getCapitalizedValue, humanizeDate, getTimeDuration } from '../utils/common.js';
 
 function getPointName(destinations, pointDestination) {
   const destinationItem = destinations.find((destination) => destination.id === pointDestination);
 
-  return getCapitalizedPointType(destinationItem.name);
+  return getCapitalizedValue(destinationItem.name);
 }
 
 function getOffersListTemplate(offers, point) {
@@ -44,7 +44,7 @@ function createPointTemplate(point, offers, destinations) {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${point.type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${getCapitalizedPointType(point.type)} ${pointName}</h3>
+        <h3 class="event__title">${getCapitalizedValue(point.type)} ${pointName}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dateStartTime}">${dateStartTimeShowed}</time>
