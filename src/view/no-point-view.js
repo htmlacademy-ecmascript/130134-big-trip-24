@@ -5,14 +5,14 @@ function createNoPointTemplate() {
 }
 
 export default class NoPointView extends AbstractView {
-  #points = [];
+  #filters = [];
 
   constructor({ filters }) {
     super();
-    this.#points = filters;
+    this.#filters = filters;
   }
 
   get template() {
-    return createNoPointTemplate(this.#points);
+    return createNoPointTemplate(this.#filters);
   }
 }
