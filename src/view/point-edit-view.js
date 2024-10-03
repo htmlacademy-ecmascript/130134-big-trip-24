@@ -7,7 +7,7 @@ const BLANK_POINT = {
   'date_to': new Date(),
   'base_price': '',
   'destination': null,
-  'is_favorite': false,
+  'isFavorite': false,
   'offers': [1],
   'type': 'flight',
 };
@@ -202,7 +202,7 @@ export default class PointEditView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#point);
   };
 
   #closeClickHandler = (evt) => {

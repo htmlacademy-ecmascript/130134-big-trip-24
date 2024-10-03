@@ -1,14 +1,17 @@
-import { render, replace } from '../framework/render.js';
+import { render } from '../framework/render.js';
 import NoPointView from '../view/no-point-view.js';
 import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
-import PointView from '../view/point-view.js';
-import PointEditView from '../view/point-edit-view.js';
+import PointPresenter from './point-presenter.js';
+import { updateItem } from '../utils/common.js';
 
 export default class BoardPresenter {
   #pointsListComponent = new PointsListView();
+  #noPointsComponent = new NoPointView();
+  #sortComponent = new SortView();
   #mainContainer = null;
   #pointsModel = null;
+  #pointPresenters = new Map();
 
   #points = [];
   #offers = [];
@@ -27,12 +30,43 @@ export default class BoardPresenter {
     this.#renderBoard();
   }
 
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updateItem(this.#points, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint, this.#offers, this.#destinations);
+  };
+
   #renderBoard() {
     if (this.#points.length === 0) {
-      render(new NoPointView(), this.#mainContainer);
+      this.#renderNoPoint();
       return;
     }
-    render(new SortView(), this.#mainContainer);
+    this.#renderSort();
+    this.#renderPointsList();
+  }
+
+  #renderPoint(point) {
+    const pointPresenter = new PointPresenter({
+      pointsListContainer: this.#pointsListComponent.element,
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange,
+    });
+    pointPresenter.init(point, this.#offers, this.#destinations);
+    this.#pointPresenters.set(point.id, pointPresenter);
+  }
+
+  #renderNoPoint() {
+    render(this.#noPointsComponent, this.#mainContainer);
+  }
+
+  #renderSort() {
+    render(this.#sortComponent, this.#mainContainer);
+  }
+
+  #renderPointsList() {
     render(this.#pointsListComponent, this.#mainContainer);
 
     this.#points.forEach((point) => {
@@ -40,47 +74,8 @@ export default class BoardPresenter {
     });
   }
 
-  #renderPoint(point) {
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceEditToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const pointComponent = new PointView({
-      point: point,
-      offers: this.#offers,
-      destinations: this.#destinations,
-      onEditClick: () => {
-        replacePointToEdit();
-        document.addEventListener('keydown', escKeyDownHandler);
-      },
-    });
-
-    const editPointComponent = new PointEditView({
-      point,
-      offers: this.#offers,
-      destinations: this.#destinations,
-      onFormSubmit: () => {
-        replaceEditToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-      onCloseClick: () => {
-        replaceEditToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-    });
-
-    function replacePointToEdit() {
-      replace(editPointComponent, pointComponent);
-    }
-
-    function replaceEditToPoint() {
-      replace(pointComponent, editPointComponent);
-    }
-
-    render(pointComponent, this.#pointsListComponent.element);
+  #clearPointsList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
   }
 }
