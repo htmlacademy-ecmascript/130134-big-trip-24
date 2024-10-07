@@ -33,4 +33,18 @@ const FilterType = {
   'PAST':'past'
 };
 
-export { POINT_TYPE, DESCRIPTION, CITIES, FilterType };
+const SortType = {
+  DEFAULT: 'day',
+  TIME: 'time',
+  PRICE: 'price',
+};
+
+const SortItems = {
+  DEFAULT: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFER: 'offer',
+};
+
+export { POINT_TYPE, DESCRIPTION, CITIES, FilterType, SortType, SortItems };

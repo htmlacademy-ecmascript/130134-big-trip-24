@@ -29,12 +29,12 @@ function getOffersListTemplate(offers, point) {
 
 function createPointTemplate(point, offers, destinations) {
   const pointName = getPointName(destinations, point.destination);
-  const dateStartDay = humanizeDate(point.date_from, 'YYYY-MM-DD');
-  const dateStartDayShowed = humanizeDate(point.date_from, 'MMM D');
-  const dateStartTime = humanizeDate(point.date_from, 'YYYY-MM-DDTHH:MM');
-  const dateStartTimeShowed = humanizeDate(point.date_from, 'HH:MM');
-  const dateEndTime = humanizeDate(point.date_to, 'YYYY-MM-DDTHH:MM');
-  const dateEndTimeShowed = humanizeDate(point.date_to, 'HH:MM');
+  const dateStartDay = humanizeDate(point.dateFrom, 'YYYY-MM-DD');
+  const dateStartDayShowed = humanizeDate(point.dateFrom, 'MMM D');
+  const dateStartTime = humanizeDate(point.dateFrom, 'YYYY-MM-DDTHH:MM');
+  const dateStartTimeShowed = humanizeDate(point.dateFrom, 'HH:MM');
+  const dateEndTime = humanizeDate(point.dateTo, 'YYYY-MM-DDTHH:MM');
+  const dateEndTimeShowed = humanizeDate(point.dateTo, 'HH:MM');
   const durationTime = getTimeDuration(dateStartTime, dateEndTime);
   const offersListTemplate = getOffersListTemplate(offers, point);
 
@@ -54,7 +54,7 @@ function createPointTemplate(point, offers, destinations) {
           <p class="event__duration">${durationTime}</p>
         </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${point.base_price}</span>
+          &euro;&nbsp;<span class="event__price-value">${point.basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">

@@ -3,9 +3,9 @@ import { getCapitalizedValue, humanizeDate } from '../utils/common.js';
 
 const BLANK_POINT = {
   'id': null,
-  'date_start': new Date(),
-  'date_to': new Date(),
-  'base_price': '',
+  'dateFrom': new Date(),
+  'dateTo': new Date(),
+  'basePrice': '',
   'destination': null,
   'isFavorite': false,
   'offers': [1],
@@ -116,8 +116,8 @@ function createEditPointTemplate(point, offers, destinations) {
   const pointControlsTemplate = createControlButtonsTemplate(point.id);
   const offersTemplate = createOffersTemplate(offers, point);
   const destinationTemplate = createDestinationTemplate(destinations, point.destination);
-  const dateFrom = humanizeDate(point.date_from, 'DD/MM/YY HH:MM');
-  const dateTo = humanizeDate(point.date_to, 'DD/MM/YY HH:MM');
+  const dateFrom = humanizeDate(point.dateFrom, 'DD/MM/YY HH:MM');
+  const dateTo = humanizeDate(point.dateTo, 'DD/MM/YY HH:MM');
 
   return `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -160,7 +160,7 @@ function createEditPointTemplate(point, offers, destinations) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.base_price}">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
