@@ -1,4 +1,4 @@
-import { render } from '../framework/render.js';
+import { render, remove } from '../framework/render.js';
 import NoPointView from '../view/no-point-view.js';
 import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
@@ -90,6 +90,8 @@ export default class BoardPresenter {
       return;
     }
     this.#sortPoints(sortType);
+    remove(this.#sortComponent);
+    this.#renderSort();
     this.#clearPointsList();
     this.#renderPointsList();
   };
