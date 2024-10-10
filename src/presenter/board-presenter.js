@@ -5,7 +5,7 @@ import PointsListView from '../view/points-list-view.js';
 import PointPresenter from './point-presenter.js';
 import { updateItem } from '../utils/common.js';
 import { sortPointsByTime, sortPointsByPrice } from '../utils/point.js';
-import { SortType } from '../const.js';
+import { SortItems } from '../const.js';
 
 export default class BoardPresenter {
   #pointsListComponent = new PointsListView();
@@ -14,7 +14,7 @@ export default class BoardPresenter {
   #mainContainer = null;
   #pointsModel = null;
   #pointPresenters = new Map();
-  #currentSortType = SortType.DEFAULT;
+  #currentSortType = SortItems.DEFAULT.name;
   #sourcedPoints = [];
 
   #points = [];
@@ -71,10 +71,10 @@ export default class BoardPresenter {
 
   #sortPoints(sortType) {
     switch (sortType) {
-      case SortType.TIME:
+      case SortItems.TIME.name:
         this.#points.sort(sortPointsByTime);
         break;
-      case SortType.PRICE:
+      case SortItems.PRICE.name:
         this.#points.sort(sortPointsByPrice);
         break;
       default:
