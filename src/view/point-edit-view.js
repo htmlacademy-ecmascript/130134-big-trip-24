@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getCapitalizedValue, humanizeDate } from '../utils/common.js';
 
 const BLANK_POINT = {
@@ -8,7 +8,7 @@ const BLANK_POINT = {
   'basePrice': '',
   'destination': null,
   'isFavorite': false,
-  'offers': [1],
+  'offers': [],
   'type': 'flight',
 };
 
@@ -127,7 +127,7 @@ function createEditPointTemplate(point, offers, destinations) {
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${point.type}.png" alt="Event type icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${point.isPointTypeListOpened ? 'checked' : ''}>
 
             <div class="event__type-list">
               <fieldset class="event__type-group">
@@ -175,8 +175,7 @@ function createEditPointTemplate(point, offers, destinations) {
     </li>`;
 }
 
-export default class PointEditView extends AbstractView {
-  #point = [];
+export default class PointEditView extends AbstractStatefulView {
   #offers = [];
   #destinations = [];
   #handleFormSubmit = null;
@@ -184,29 +183,128 @@ export default class PointEditView extends AbstractView {
 
   constructor({ point = BLANK_POINT, offers, destinations, onFormSubmit, onCloseClick }) {
     super();
-    this.#point = point;
+    this._setState(PointEditView.parsePointtoState(point));
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleCloseClick = onCloseClick;
 
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
-    if (this.#point.id !== null) {
-      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
-    }
+    this._restoreHandlers();
   }
 
   get template() {
-    return createEditPointTemplate(this.#point, this.#offers, this.#destinations);
+    return createEditPointTemplate(this._state, this.#offers, this.#destinations);
   }
+
+  reset(point) {
+    this.updateElement(
+      PointEditView.parsePointtoState(point),
+    );
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+    if (this._state.id !== null) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    }
+    this.element.querySelector('.event__type-toggle').addEventListener('click', this.#pointTypeListToggleHandler);
+    this.element.querySelector('.event__type-list').addEventListener('click', this.#pointTypeClickHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('keydown', this.#destinationKeydownHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('focusin', this.#destinationFocusinHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('focusout', this.#destinationFocusoutHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('input', this.#destinationInputHandler);
+    this.element.querySelector('#event-start-time-1').addEventListener('focusout', this.#startTimeFocusoutHandler);
+    this.element.querySelector('#event-end-time-1').addEventListener('focusout', this.#endTimeFocusoutHandler);
+    this.element.querySelector('.event__input--price').addEventListener('keydown', this.#priceKeydownHandler);
+  }
+
+  #priceKeydownHandler = (evt) => {
+    const numberRegex = /^\d+$/;
+    if (!numberRegex.exec(evt.target.value)) {
+      evt.preventDefault();
+      return;
+    }
+
+    this._setState({
+      basePrice: evt.target.value,
+    });
+  };
+
+  #endTimeFocusoutHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      dateTo: evt.target.value,
+    });
+  };
+
+  #startTimeFocusoutHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      dateFrom: evt.target.value,
+    });
+  };
+
+  #destinationKeydownHandler = (evt) => {
+    evt.preventDefault();
+  };
+
+  #destinationFocusinHandler = (evt) => {
+    evt.preventDefault();
+    evt.target.value = '';
+  };
+
+  #destinationFocusoutHandler = (evt) => {
+    evt.preventDefault();
+    evt.target.value = this.#destinations.find((destination) => destination.id === this._state.destination).name;
+  };
+
+  #destinationInputHandler = (evt) => {
+    evt.preventDefault();
+    const destinationName = evt.target.value;
+    const currentDestinationItem = this.#destinations.find((destination) => destination.name.toLowerCase() === destinationName.toLowerCase());
+
+    this.updateElement({
+      destination: currentDestinationItem.id,
+    });
+  };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#point);
+    this.#handleFormSubmit(PointEditView.parseStateToPoint(this._state));
+  };
+
+  #pointTypeListToggleHandler = () => {
+    this._setState({
+      isPointTypeListOpened: !this._state.isPointTypeListOpened,
+    });
+  };
+
+  #pointTypeClickHandler = (evt) => {
+    if (!evt.target.classList.contains('event__type-input')) {
+      return;
+    }
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+    });
   };
 
   #closeClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleCloseClick();
   };
+
+  static parsePointtoState(point) {
+    return { ...point,
+      isPointTypeListOpened: false,
+    };
+  }
+
+  static parseStateToPoint(state) {
+    const point = {...state};
+
+    delete point.isPointTypeListOpened;
+
+    return point;
+  }
 }
