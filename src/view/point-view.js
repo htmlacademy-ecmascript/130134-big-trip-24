@@ -31,10 +31,10 @@ function createPointTemplate(point, offers, destinations) {
   const pointName = getPointName(destinations, point.destination);
   const dateStartDay = humanizeDate(point.dateFrom, 'YYYY-MM-DD');
   const dateStartDayShowed = humanizeDate(point.dateFrom, 'MMM D');
-  const dateStartTime = humanizeDate(point.dateFrom, 'YYYY-MM-DDTHH:MM');
-  const dateStartTimeShowed = humanizeDate(point.dateFrom, 'HH:MM');
-  const dateEndTime = humanizeDate(point.dateTo, 'YYYY-MM-DDTHH:MM');
-  const dateEndTimeShowed = humanizeDate(point.dateTo, 'HH:MM');
+  const dateStartTime = humanizeDate(point.dateFrom, 'YYYY-MM-DDTHH:mm');
+  const dateStartTimeShowed = humanizeDate(point.dateFrom, 'HH:mm');
+  const dateEndTime = humanizeDate(point.dateTo, 'YYYY-MM-DDTHH:mm');
+  const dateEndTimeShowed = humanizeDate(point.dateTo, 'HH:mm');
   const durationTime = getTimeDuration(dateStartTime, dateEndTime);
   const offersListTemplate = getOffersListTemplate(offers, point);
 

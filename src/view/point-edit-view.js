@@ -1,5 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getCapitalizedValue, humanizeDate } from '../utils/common.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
   'id': null,
@@ -42,7 +45,7 @@ function createControlButtonsTemplate(pointId) {
 function createOffersList(offers, pointOffers) {
   return offers.reduce((acc, offer) => {
     const offerItem = `<div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}-1" type="checkbox" name="event-offer-${offer.id}" ${pointOffers.includes(offer.id) ? 'checked' : ''}>
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}-1" data-id="${offer.id}" type="checkbox" name="event-offer-${offer.id}" ${pointOffers.includes(offer.id) ? 'checked' : ''}>
               <label class="event__offer-label" for="event-offer-${offer.id}-1">
                 <span class="event__offer-title">${offer.title}</span>
                 &plus;&euro;&nbsp;
@@ -88,7 +91,7 @@ function createPhotosTemplate(photos) {
 function createDestinationTemplate(destinations, pointDestination) {
   const destinationItem = destinations.find((destination) => destination.id === pointDestination);
 
-  if (!!destinationItem !== 'undefined') {
+  if (typeof destinationItem !== 'undefined') {
     return `<section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
               <p class="event__destination-description">${destinationItem.description}</p>
@@ -116,8 +119,8 @@ function createEditPointTemplate(point, offers, destinations) {
   const pointControlsTemplate = createControlButtonsTemplate(point.id);
   const offersTemplate = createOffersTemplate(offers, point);
   const destinationTemplate = createDestinationTemplate(destinations, point.destination);
-  const dateFrom = humanizeDate(point.dateFrom, 'DD/MM/YY HH:MM');
-  const dateTo = humanizeDate(point.dateTo, 'DD/MM/YY HH:MM');
+  const dateFrom = humanizeDate(point.dateFrom, 'DD/MM/YY HH:mm');
+  const dateTo = humanizeDate(point.dateTo, 'DD/MM/YY HH:mm');
 
   return `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -160,7 +163,7 @@ function createEditPointTemplate(point, offers, destinations) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.basePrice}">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${point.basePrice}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -180,6 +183,8 @@ export default class PointEditView extends AbstractStatefulView {
   #destinations = [];
   #handleFormSubmit = null;
   #handleCloseClick = null;
+  #datepickerStart = null;
+  #datepickerEnd = null;
 
   constructor({ point = BLANK_POINT, offers, destinations, onFormSubmit, onCloseClick }) {
     super();
@@ -196,6 +201,17 @@ export default class PointEditView extends AbstractStatefulView {
     return createEditPointTemplate(this._state, this.#offers, this.#destinations);
   }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepickerStart || this.#datepickerEnd) {
+      this.#datepickerStart.destroy();
+      this.#datepickerStart = null;
+      this.#datepickerEnd.destroy();
+      this.#datepickerEnd = null;
+    }
+  }
+
   reset(point) {
     this.updateElement(
       PointEditView.parsePointtoState(point),
@@ -207,61 +223,56 @@ export default class PointEditView extends AbstractStatefulView {
     if (this._state.id !== null) {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     }
-    this.element.querySelector('.event__type-toggle').addEventListener('click', this.#pointTypeListToggleHandler);
     this.element.querySelector('.event__type-list').addEventListener('click', this.#pointTypeClickHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('keydown', this.#destinationKeydownHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('focusin', this.#destinationFocusinHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('focusout', this.#destinationFocusoutHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('input', this.#destinationInputHandler);
-    this.element.querySelector('#event-start-time-1').addEventListener('focusout', this.#startTimeFocusoutHandler);
-    this.element.querySelector('#event-end-time-1').addEventListener('focusout', this.#endTimeFocusoutHandler);
-    this.element.querySelector('.event__input--price').addEventListener('keydown', this.#priceKeydownHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
+    this.element.querySelector('.event__details').addEventListener('click', this.#offersClickHandler);
+
+    this.#setDatepickers();
   }
 
-  #priceKeydownHandler = (evt) => {
-    const numberRegex = /^\d+$/;
-    if (!numberRegex.exec(evt.target.value)) {
-      evt.preventDefault();
+  #offersClickHandler = (evt) => {
+    if (!evt.target.classList.contains('event__offer-checkbox')) {
       return;
     }
 
+    if (this._state.offers.includes(evt.target.dataset.id)) {
+      this._setState({
+        offers: this._state.offers.filter((item) => item !== evt.target.dataset.id),
+      });
+      return;
+    }
+
+    this._setState({
+      offers: [...this._state.offers, evt.target.dataset.id],
+    });
+  };
+
+  #priceInputHandler = (evt) => {
     this._setState({
       basePrice: evt.target.value,
     });
   };
 
-  #endTimeFocusoutHandler = (evt) => {
-    evt.preventDefault();
+  #endTimeFocusoutHandler = (userDate) => {
     this._setState({
-      dateTo: evt.target.value,
+      dateTo: userDate[0],
     });
   };
 
-  #startTimeFocusoutHandler = (evt) => {
-    evt.preventDefault();
+  #startTimeFocusoutHandler = (userDate) => {
     this._setState({
-      dateFrom: evt.target.value,
+      dateFrom: userDate[0],
     });
   };
 
-  #destinationKeydownHandler = (evt) => {
+  #destinationChangeHandler = (evt) => {
     evt.preventDefault();
-  };
-
-  #destinationFocusinHandler = (evt) => {
-    evt.preventDefault();
-    evt.target.value = '';
-  };
-
-  #destinationFocusoutHandler = (evt) => {
-    evt.preventDefault();
-    evt.target.value = this.#destinations.find((destination) => destination.id === this._state.destination).name;
-  };
-
-  #destinationInputHandler = (evt) => {
-    evt.preventDefault();
-    const destinationName = evt.target.value;
-    const currentDestinationItem = this.#destinations.find((destination) => destination.name.toLowerCase() === destinationName.toLowerCase());
+    const currentDestinationItem = this.#destinations.find((destination) => destination.name.toLowerCase() === evt.target.value.toLowerCase());
+    if (typeof currentDestinationItem === 'undefined') {
+      evt.target.value = '';
+      return;
+    }
 
     this.updateElement({
       destination: currentDestinationItem.id,
@@ -273,12 +284,6 @@ export default class PointEditView extends AbstractStatefulView {
     this.#handleFormSubmit(PointEditView.parseStateToPoint(this._state));
   };
 
-  #pointTypeListToggleHandler = () => {
-    this._setState({
-      isPointTypeListOpened: !this._state.isPointTypeListOpened,
-    });
-  };
-
   #pointTypeClickHandler = (evt) => {
     if (!evt.target.classList.contains('event__type-input')) {
       return;
@@ -286,6 +291,7 @@ export default class PointEditView extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
+      offers: [],
     });
   };
 
@@ -294,17 +300,36 @@ export default class PointEditView extends AbstractStatefulView {
     this.#handleCloseClick();
   };
 
+  #setDatepickers() {
+    this.#datepickerStart = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        enableTime: true,
+        'time_24hr': true,
+        dateFormat: 'd/m/y H:i',
+        maxDate: this._state.dateTo,
+        defaultDate: this._state.dateFrom,
+        onChange: this.#startTimeFocusoutHandler,
+      },
+    );
+    this.#datepickerEnd = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        'time_24hr': true,
+        dateFormat: 'd/m/y H:i',
+        minDate: this._state.dateFrom,
+        defaultDate: this._state.dateTo,
+        onChange: this.#endTimeFocusoutHandler,
+      },
+    );
+  }
+
   static parsePointtoState(point) {
-    return { ...point,
-      isPointTypeListOpened: false,
-    };
+    return { ...point };
   }
 
   static parseStateToPoint(state) {
-    const point = {...state};
-
-    delete point.isPointTypeListOpened;
-
-    return point;
+    return { ...state };
   }
 }
