@@ -36,15 +36,10 @@ function getTimeDuration(startTime, endTime) {
     .padStart(2, '0')}M`;
 }
 
-function updateItem(items, update) {
-  return items.map((item) => (item.id === update.id ? update : item));
-}
-
 export {
   getRandomArrayElement,
   getRandomInt,
   humanizeDate,
   getCapitalizedValue,
   getTimeDuration,
-  updateItem,
 };

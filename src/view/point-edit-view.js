@@ -236,15 +236,16 @@ export default class PointEditView extends AbstractStatefulView {
       return;
     }
 
-    if (this._state.offers.includes(evt.target.dataset.id)) {
+    const offerId = evt.target.dataset.id;
+    if (this._state.offers.includes(offerId)) {
       this._setState({
-        offers: this._state.offers.filter((item) => item !== evt.target.dataset.id),
+        offers: this._state.offers.filter((item) => item !== offerId),
       });
       return;
     }
 
     this._setState({
-      offers: [...this._state.offers, evt.target.dataset.id],
+      offers: [...this._state.offers, offerId],
     });
   };
 
