@@ -48,16 +48,16 @@ export default class BoardPresenter {
   };
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log(actionType, updateType, update);
+    console.log('handleViewAction- ' + actionType, updateType, update);
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.points.updatePoint(updateType, update);
+        this.#pointsModel.updatePoint(updateType, update);
         break;
       case UserAction.ADD_POINT:
-        this.points.addPoint(updateType, update);
+        this.#pointsModel.addPoint(updateType, update);
         break;
       case UserAction.DELETE_POINT:
-        this.points.deletePoint(updateType, update);
+        this.#pointsModel.deletePoint(updateType, update);
         break;
     }
   };

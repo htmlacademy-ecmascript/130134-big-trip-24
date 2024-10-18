@@ -93,9 +93,9 @@ export default class PointPresenter {
     // тип точки, город и офферы - патч
     // даты и цена - минорное обновление
     const isMinorUpdate =
-      !isDatesEqual(this.point.dateFrom, update.dateFrom) ||
-      !isDatesEqual(this.point.dateTo, update.dateTo) ||
-      this.point.basePrice !== update.basePrice;
+      !isDatesEqual(this.#point.dateFrom, update.dateFrom) ||
+      !isDatesEqual(this.#point.dateTo, update.dateTo) ||
+      this.#point.basePrice !== update.basePrice;
 
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
@@ -123,10 +123,13 @@ export default class PointPresenter {
   };
 
   #handleDeleteClick = (point) => {
-    this.#handleDataChange(UserAction.DELETE_TASK, UpdateType.MINOR, point);
+    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange(UserAction, UpdateType, { ...this.#point, isFavorite: !this.#point.isFavorite });
+    this.#handleDataChange(UserAction.UPDATE_POINT, UpdateType.PATCH, {
+      ...this.#point,
+      isFavorite: !this.#point.isFavorite,
+    });
   };
 }
