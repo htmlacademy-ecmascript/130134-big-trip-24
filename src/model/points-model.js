@@ -13,40 +13,40 @@ export default class PointsModel extends Observable {
   }
 
   updatePoint(updateType, update) {
-    const index = this.#offers.findIndex((offer) => offer.id === update.id);
+    const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting task');
     }
 
-    this.#offers = [
-      ...this.#offers.slice(0, index),
+    this.#points = [
+      ...this.#points.slice(0, index),
       update,
-      ...this.#offers.slice(index + 1),
+      ...this.#points.slice(index + 1),
     ];
 
     this._notify(updateType, update);
   }
 
   addPoint(updateType, update) {
-    this.#offers = [
+    this.#points = [
       update,
-      ...this.#offers,
+      ...this.#points,
     ];
 
     this._notify(updateType, update);
   }
 
   deletePoint(updateType, update) {
-    const index = this.#offers.findIndex((offer) => offer.id === update.id);
+    const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting task');
     }
 
-    this.#offers = [
-      ...this.#offers.slice(0, index),
-      ...this.#offers.slice(index + 1),
+    this.#points = [
+      ...this.#points.slice(0, index),
+      ...this.#points.slice(index + 1),
     ];
 
     this._notify(updateType);

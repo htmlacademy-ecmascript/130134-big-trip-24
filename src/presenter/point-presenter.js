@@ -2,6 +2,7 @@ import { remove, render, replace } from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
 import { UserAction, UpdateType } from '../const.js';
+import { isDatesEqual } from '../utils/point.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -43,6 +44,7 @@ export default class PointPresenter {
       destinations,
       onFormSubmit: this.#handleFormSubmit,
       onCloseClick: this.#handleCloseClick,
+      onDeleteClick: this.#handleDeleteClick,
     });
 
     if (prevPointComponent === null || prevEditPointComponent === null) {
@@ -87,8 +89,19 @@ export default class PointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
-  #handleFormSubmit = (point) => {
-    this.#handleDataChange(UserAction, UpdateType, point);
+  #handleFormSubmit = (update) => {
+    // тип точки, город и офферы - патч
+    // даты и цена - минорное обновление
+    const isMinorUpdate =
+      !isDatesEqual(this.point.dateFrom, update.dateFrom) ||
+      !isDatesEqual(this.point.dateTo, update.dateTo) ||
+      this.point.basePrice !== update.basePrice;
+
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update
+    );
     this.#replaceEditToPoint();
   };
 
@@ -107,6 +120,10 @@ export default class PointPresenter {
   #handleCloseClick = () => {
     this.#editPointComponent.reset(this.#point);
     this.#replaceEditToPoint();
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(UserAction.DELETE_TASK, UpdateType.MINOR, point);
   };
 
   #handleFavoriteClick = () => {

@@ -10,4 +10,8 @@ function sortPointsByPrice(priceA, priceB) {
   return priceB.basePrice - priceA.basePrice;
 }
 
-export { sortPointsByTime, sortPointsByPrice };
+function isDatesEqual(dateA, dateB) {
+  return (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'm');
+}
+
+export { sortPointsByTime, sortPointsByPrice, isDatesEqual };
