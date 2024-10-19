@@ -4,35 +4,44 @@ import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import PointPresenter from './point-presenter.js';
 import { sortPointsByTime, sortPointsByPrice } from '../utils/point.js';
-import { SortItems, UpdateType, UserAction } from '../const.js';
+import { SortItems, UpdateType, UserAction, FilterType } from '../const.js';
+import { filter } from '../utils/filter.js';
 
 export default class BoardPresenter {
   #pointsListComponent = new PointsListView();
-  #noPointsComponent = new NoPointView();
+  #noPointsComponent = null;
   #sortComponent = null;
   #mainContainer = null;
   #pointsModel = null;
+  #filterModel = null;
   #pointPresenters = new Map();
   #currentSortType = SortItems.DEFAULT.name;
+  #filterType = FilterType.EVERYTHING;
 
   #offers = [];
   #destinations = [];
 
-  constructor({ boardContainer: mainContainer, pointsModel }) {
+  constructor({ boardContainer: mainContainer, pointsModel, filterModel }) {
     this.#mainContainer = mainContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
+    this.#filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[this.#filterType](points);
+
     switch (this.#currentSortType) {
       case SortItems.TIME.name:
-        return [...this.#pointsModel.points].sort(sortPointsByTime);
+        return [...filteredPoints].sort(sortPointsByTime);
       case SortItems.PRICE.name:
-        return [...this.#pointsModel.points].sort(sortPointsByPrice);
+        return [...filteredPoints].sort(sortPointsByPrice);
       default:
-        return this.#pointsModel.points;
+        return filteredPoints;
     }
   }
 
@@ -48,7 +57,6 @@ export default class BoardPresenter {
   };
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log('handleViewAction- ' + actionType, updateType, update);
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointsModel.updatePoint(updateType, update);
@@ -63,7 +71,6 @@ export default class BoardPresenter {
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
     switch (updateType) {
       case UpdateType.PATCH:
         this.#pointPresenters.get(data.id).init(data, this.#offers, this.#destinations);
@@ -98,7 +105,10 @@ export default class BoardPresenter {
     this.#pointPresenters.clear();
 
     remove(this.#sortComponent);
-    remove(this.#noPointsComponent);
+
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortItems.DEFAULT.name;
@@ -116,6 +126,10 @@ export default class BoardPresenter {
   }
 
   #renderNoPoints() {
+    this.#noPointsComponent = new NoPointView({
+      filterType: this.#filterType,
+    });
+
     render(this.#noPointsComponent, this.#mainContainer);
   }
 

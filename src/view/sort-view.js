@@ -5,7 +5,7 @@ import { SortItems } from '../const.js';
 function createSortItemsTemplate(sortItems, currentSort) {
   return Object.values(sortItems).reduce((acc, sort) => {
     const sortItem = `<div class="trip-sort__item  trip-sort__item--${sort.name}">
-        <input id="sort-${sort.name}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sort.name}" ${sort.isEnabled ? '' : 'disabled'}  ${sort.name === currentSort ? 'checked' : ''}>
+        <input id="sort-${sort.name}" class="trip-sort__input  visually-hidden" data-id="${sort.name}" type="radio" name="trip-sort" value="sort-${sort.name}" ${sort.isEnabled ? '' : 'disabled'}  ${sort.name === currentSort ? 'checked' : ''}>
         <label class="trip-sort__btn" for="sort-${sort.name}">${sort.name === 'offer' ? `${getCapitalizedValue(sort.name)}s` : getCapitalizedValue(sort.name)}</label>
       </div>`;
     return acc + sortItem;
@@ -36,7 +36,7 @@ export default class SortView extends AbstractView {
   }
 
   #sortTypeChangeHandler = (evt) => {
-    const sortType = evt.target.value.slice(5);
+    const sortType = evt.target.dataset.id;
 
     this.#handleSortTypeChange(sortType);
   };

@@ -90,8 +90,6 @@ export default class PointPresenter {
   }
 
   #handleFormSubmit = (update) => {
-    // тип точки, город и офферы - патч
-    // даты и цена - минорное обновление
     const isMinorUpdate =
       !isDatesEqual(this.#point.dateFrom, update.dateFrom) ||
       !isDatesEqual(this.#point.dateTo, update.dateTo) ||
