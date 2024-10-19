@@ -1,3 +1,4 @@
+import he from 'he';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getCapitalizedValue, humanizeDate } from '../utils/common.js';
 import flatpickr from 'flatpickr';
@@ -6,8 +7,8 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
   'id': null,
-  'dateFrom': new Date(),
-  'dateTo': new Date(),
+  'dateFrom': null,
+  'dateTo': null,
   'basePrice': '',
   'destination': null,
   'isFavorite': false,
@@ -144,7 +145,7 @@ function createEditPointTemplate(point, offers, destinations) {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${getCapitalizedValue(point.type)}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointName}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(pointName)}" list="destination-list-1">
             <datalist id="destination-list-1">
               ${destinationsOptionsTemplate}
             </datalist>
@@ -306,6 +307,11 @@ export default class PointEditView extends AbstractStatefulView {
 
   #pointDeleteClickHandler = (evt) => {
     evt.preventDefault();
+    if (this._state.id === null) {
+      this.#handleDeleteClick();
+      return;
+    }
+
     this.#handleDeleteClick(PointEditView.parseStateToPoint(this._state));
   };
 
