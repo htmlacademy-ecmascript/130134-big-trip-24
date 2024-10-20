@@ -5,15 +5,15 @@ import { FilterType } from '../const.js';
 dayjs.extend(isBetween);
 
 function isFuturePoint(point) {
-  return point && dayjs().isBefore(point.date_from, 'D');
+  return point && dayjs().isBefore(point.dateFrom, 'D');
 }
 
 function isPresentPoint(point) {
-  return point && dayjs().isBetween(point.date_from, point.date_to, 'D', '[]');
+  return point && dayjs().isBetween(point.dateFrom, point.dateTo, 'D', '[]');
 }
 
 function isPastPoint(point) {
-  return point && dayjs().isAfter(point.date_to, 'D');
+  return point && dayjs().isAfter(point.dateTo, 'D');
 }
 
 const filter = {

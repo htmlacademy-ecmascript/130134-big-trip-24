@@ -1,3 +1,4 @@
+import he from 'he';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getCapitalizedValue, humanizeDate } from '../utils/common.js';
 import flatpickr from 'flatpickr';
@@ -6,8 +7,8 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
   'id': null,
-  'dateFrom': new Date(),
-  'dateTo': new Date(),
+  'dateFrom': null,
+  'dateTo': null,
   'basePrice': '',
   'destination': null,
   'isFavorite': false,
@@ -144,7 +145,7 @@ function createEditPointTemplate(point, offers, destinations) {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${getCapitalizedValue(point.type)}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointName}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(pointName)}" list="destination-list-1">
             <datalist id="destination-list-1">
               ${destinationsOptionsTemplate}
             </datalist>
@@ -185,14 +186,16 @@ export default class PointEditView extends AbstractStatefulView {
   #handleCloseClick = null;
   #datepickerStart = null;
   #datepickerEnd = null;
+  #handleDeleteClick = null;
 
-  constructor({ point = BLANK_POINT, offers, destinations, onFormSubmit, onCloseClick }) {
+  constructor({ point = BLANK_POINT, offers, destinations, onFormSubmit, onCloseClick, onDeleteClick }) {
     super();
     this._setState(PointEditView.parsePointtoState(point));
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleCloseClick = onCloseClick;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -227,6 +230,7 @@ export default class PointEditView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
     this.element.querySelector('.event__details').addEventListener('click', this.#offersClickHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#pointDeleteClickHandler);
 
     this.#setDatepickers();
   }
@@ -236,15 +240,16 @@ export default class PointEditView extends AbstractStatefulView {
       return;
     }
 
-    if (this._state.offers.includes(evt.target.dataset.id)) {
+    const offerId = evt.target.dataset.id;
+    if (this._state.offers.includes(offerId)) {
       this._setState({
-        offers: this._state.offers.filter((item) => item !== evt.target.dataset.id),
+        offers: this._state.offers.filter((item) => item !== offerId),
       });
       return;
     }
 
     this._setState({
-      offers: [...this._state.offers, evt.target.dataset.id],
+      offers: [...this._state.offers, offerId],
     });
   };
 
@@ -298,6 +303,16 @@ export default class PointEditView extends AbstractStatefulView {
   #closeClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleCloseClick();
+  };
+
+  #pointDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    if (this._state.id === null) {
+      this.#handleDeleteClick();
+      return;
+    }
+
+    this.#handleDeleteClick(PointEditView.parseStateToPoint(this._state));
   };
 
   #setDatepickers() {
