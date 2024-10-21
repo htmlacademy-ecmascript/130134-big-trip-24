@@ -4,7 +4,11 @@ import { getCapitalizedValue, humanizeDate, getTimeDuration } from '../utils/com
 function getPointName(destinations, pointDestination) {
   const destinationItem = destinations.find((destination) => destination.id === pointDestination);
 
-  return getCapitalizedValue(destinationItem.name);
+  if (typeof destinationItem !== 'undefined') {
+    return getCapitalizedValue(destinationItem.name);
+  }
+
+  return '';
 }
 
 function getOffersListTemplate(offers, point) {

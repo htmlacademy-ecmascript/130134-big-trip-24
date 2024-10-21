@@ -1,15 +1,5 @@
 import dayjs from 'dayjs';
 
-function getRandomInt(min = 0, max = 500) {
-  const minCeiled = Math.ceil(min);
-  const maxFloored = Math.floor(max);
-  return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
-}
-
-function getRandomArrayElement(items) {
-  return items[getRandomInt(0, items.length)];
-}
-
 function getCapitalizedValue(anyValue) {
   return anyValue ? anyValue[0].toUpperCase() + anyValue.slice(1) : '';
 }
@@ -37,8 +27,6 @@ function getTimeDuration(startTime, endTime) {
 }
 
 export {
-  getRandomArrayElement,
-  getRandomInt,
   humanizeDate,
   getCapitalizedValue,
   getTimeDuration,
