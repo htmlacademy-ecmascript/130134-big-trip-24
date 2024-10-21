@@ -14,31 +14,15 @@ export default class PointsModel extends Observable {
 
   async init() {
     try {
-      const points = await this.#pointsApiService.points;
+      const [points, destinations, offers] = await Promise.all([this.#pointsApiService.points, this.#pointsApiService.destinations, this.#pointsApiService.offers]);
       this.#points = points.map(this.#adaptToClient);
-      const destinations = await this.#pointsApiService.destinations;
       this.#destinations = destinations;
-      const offers = await this.#pointsApiService.offers;
       this.#offers = offers;
-    } catch(err) {
+    } catch {
       this.#points = [];
-
+      this.#destinations = [];
+      this.#offers = [];
     }
-
-    // Promise.all([this.#pointsApiService.points, this.#pointsApiService.destinations, this.#pointsApiService.offers])
-    //   .then(([points, destinations, offers]) => {
-    //     this.#points = points.map(this.#adaptToClient);
-    //     this.#destinations = destinations;
-    //     this.#offers = offers;
-    //     console.log(this.#points);
-    //     console.log(this.#destinations);
-    //     console.log(this.#offers);
-    //   })
-    //   .catch(() => {
-    //     console.log('error');
-
-    //     this.#points = [];
-    //   });
 
     this._notify(UpdateType.INIT);
   }
@@ -65,28 +49,42 @@ export default class PointsModel extends Observable {
     }
   }
 
-  addPoint(updateType, update) {
-    this.#points = [
-      update,
-      ...this.#points,
-    ];
+  async addPoint(updateType, update) {
+    try {
+      // сервер не принимает объект с id, удаляю его.
+      // Может вообще переделать объект во вьюхе чтобы id не было?
+      delete update.id;
+      const response = await this.#pointsApiService.addPoint(update);
+      const newPoint = this.#adaptToClient(response);
+      this.#points = [
+        newPoint,
+        ...this.#points,
+      ];
 
-    this._notify(updateType, update);
+      this._notify(updateType, newPoint);
+    } catch (error) {
+      throw new Error(`Can't add point, error - ${error}`);
+    }
   }
 
-  deletePoint(updateType, update) {
+  async deletePoint(updateType, update) {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t update unexisting task');
+      throw new Error('Can\'t delete unexisting point');
     }
 
-    this.#points = [
-      ...this.#points.slice(0, index),
-      ...this.#points.slice(index + 1),
-    ];
+    try {
+      await this.#pointsApiService.deletePoint(update);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        ...this.#points.slice(index + 1),
+      ];
 
-    this._notify(updateType);
+      this._notify(updateType);
+    } catch (error) {
+      throw new Error(`Can't delete point, error - ${error}`);
+    }
   }
 
   #adaptToClient(point) {
