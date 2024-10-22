@@ -8,7 +8,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 const BLANK_POINT = {
   'dateFrom': null,
   'dateTo': null,
-  'basePrice': '',
+  'basePrice': 0,
   'destination': null,
   'isFavorite': false,
   'offers': [],
@@ -258,18 +258,6 @@ export default class PointEditView extends AbstractStatefulView {
     });
   };
 
-  #endTimeFocusoutHandler = (userDate) => {
-    this._setState({
-      dateTo: userDate[0],
-    });
-  };
-
-  #startTimeFocusoutHandler = (userDate) => {
-    this._setState({
-      dateFrom: userDate[0],
-    });
-  };
-
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
     const currentDestinationItem = this.#destinations.find((destination) => destination.name.toLowerCase() === evt.target.value.toLowerCase());
@@ -312,6 +300,20 @@ export default class PointEditView extends AbstractStatefulView {
     }
 
     this.#handleDeleteClick(PointEditView.parseStateToPoint(this._state));
+  };
+
+  #startTimeFocusoutHandler = (userDate) => {
+    this._setState({
+      dateFrom: userDate[0],
+    });
+    this.#datepickerEnd.set('minDate', userDate[0]);
+  };
+
+  #endTimeFocusoutHandler = (userDate) => {
+    this._setState({
+      dateTo: userDate[0],
+    });
+    this.#datepickerStart.set('maxDate', userDate[0]);
   };
 
   #setDatepickers() {
