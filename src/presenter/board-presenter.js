@@ -1,4 +1,5 @@
 import { render, remove } from '../framework/render.js';
+import FailedLoadView from '../view/failed-load-view.js';
 import NoPointView from '../view/no-point-view.js';
 import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
@@ -18,11 +19,13 @@ const TimeLimit = {
 export default class BoardPresenter {
   #loadingComponent = new LoadingView();
   #pointsListComponent = new PointsListView();
+  #failedLoadComponent = new FailedLoadView();
   #noPointsComponent = null;
   #sortComponent = null;
   #mainContainer = null;
   #pointsModel = null;
   #filterModel = null;
+  #handleLoadingFailed = null;
   #pointPresenters = new Map();
   #newPointPresenter = null;
   #currentSortType = SortItems.DEFAULT.name;
@@ -30,13 +33,14 @@ export default class BoardPresenter {
   #isLoading = true;
   #uiBlocker = new UiBlocker({
     lowerLimit: TimeLimit.LOWER_LIMIT,
-    upperLimit: TimeLimit.UPPER_LIMIT
+    upperLimit: TimeLimit.UPPER_LIMIT,
   });
 
-  constructor({ mainContainer, pointsModel, filterModel, onNewPointDestroy }) {
+  constructor({ mainContainer, pointsModel, filterModel, onNewPointDestroy, onLoadingFailed }) {
     this.#mainContainer = mainContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#handleLoadingFailed = onLoadingFailed;
 
     this.#newPointPresenter = new NewPointPresenter({
       pointsListContainer: this.#pointsListComponent.element,
@@ -146,6 +150,11 @@ export default class BoardPresenter {
       return;
     }
 
+    if (this.destinations.length === 0 || this.offers.length === 0) {
+      this.#renderFailedLoad();
+      return;
+    }
+
     if (this.points.length === 0) {
       this.#renderNoPoints();
       return;
@@ -191,6 +200,11 @@ export default class BoardPresenter {
     });
     pointPresenter.init(point, this.offers, this.destinations);
     this.#pointPresenters.set(point.id, pointPresenter);
+  }
+
+  #renderFailedLoad() {
+    this.#handleLoadingFailed();
+    render(this.#failedLoadComponent, this.#mainContainer);
   }
 
   #renderNoPoints() {

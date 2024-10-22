@@ -23,6 +23,7 @@ const boardPresenter = new BoardPresenter({
   pointsModel,
   filterModel,
   onNewPointDestroy: handleNewPointClose,
+  onLoadingFailed: handleLoadingFailed,
 });
 
 const filterPresenter = new FilterPresenter({
@@ -41,6 +42,10 @@ function handleNewPointClose() {
 
 function handleNewPointButtonClick() {
   boardPresenter.createPoint();
+  newPointButtonComponent.element.disabled = true;
+}
+
+function handleLoadingFailed() {
   newPointButtonComponent.element.disabled = true;
 }
 
