@@ -51,9 +51,6 @@ export default class PointsModel extends Observable {
 
   async addPoint(updateType, update) {
     try {
-      // сервер не принимает объект с id, удаляю его.
-      // Может вообще переделать объект во вьюхе чтобы id не было?
-      delete update.id;
       const response = await this.#pointsApiService.addPoint(update);
       const newPoint = this.#adaptToClient(response);
       this.#points = [

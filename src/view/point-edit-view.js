@@ -6,7 +6,6 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
-  'id': null,
   'dateFrom': null,
   'dateTo': null,
   'basePrice': '',
@@ -35,7 +34,7 @@ function createDestinationsListTemplate(destinations) {
 }
 
 function createControlButtonsTemplate(pointId) {
-  return pointId !== null
+  return typeof pointId !== 'undefined'
     ? `<button class="event__reset-btn" type="reset">Delete</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
@@ -223,7 +222,7 @@ export default class PointEditView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
-    if (this._state.id !== null) {
+    if (typeof this._state.id !== 'undefined') {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     }
     this.element.querySelector('.event__type-list').addEventListener('click', this.#pointTypeClickHandler);
