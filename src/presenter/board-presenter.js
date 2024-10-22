@@ -1,4 +1,5 @@
 import { render, remove } from '../framework/render.js';
+import FailedLoadView from '../view/failed-load-view.js';
 import NoPointView from '../view/no-point-view.js';
 import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
@@ -8,25 +9,38 @@ import { sortPointsByTime, sortPointsByPrice } from '../utils/point.js';
 import { SortItems, UpdateType, UserAction, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
 import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class BoardPresenter {
   #loadingComponent = new LoadingView();
   #pointsListComponent = new PointsListView();
+  #failedLoadComponent = new FailedLoadView();
   #noPointsComponent = null;
   #sortComponent = null;
   #mainContainer = null;
   #pointsModel = null;
   #filterModel = null;
+  #handleLoadingFailed = null;
   #pointPresenters = new Map();
   #newPointPresenter = null;
   #currentSortType = SortItems.DEFAULT.name;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT,
+  });
 
-  constructor({ mainContainer, pointsModel, filterModel, onNewPointDestroy }) {
+  constructor({ mainContainer, pointsModel, filterModel, onNewPointDestroy, onLoadingFailed }) {
     this.#mainContainer = mainContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#handleLoadingFailed = onLoadingFailed;
 
     this.#newPointPresenter = new NewPointPresenter({
       pointsListContainer: this.#pointsListComponent.element,
@@ -76,18 +90,37 @@ export default class BoardPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch (error) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#newPointPresenter.setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch (error) {
+          this.#newPointPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch (error) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -114,6 +147,11 @@ export default class BoardPresenter {
   #renderBoard() {
     if (this.#isLoading) {
       this.#renderLoading();
+      return;
+    }
+
+    if (this.destinations.length === 0 || this.offers.length === 0) {
+      this.#renderFailedLoad();
       return;
     }
 
@@ -162,6 +200,11 @@ export default class BoardPresenter {
     });
     pointPresenter.init(point, this.offers, this.destinations);
     this.#pointPresenters.set(point.id, pointPresenter);
+  }
+
+  #renderFailedLoad() {
+    this.#handleLoadingFailed();
+    render(this.#failedLoadComponent, this.#mainContainer);
   }
 
   #renderNoPoints() {
