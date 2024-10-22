@@ -40,9 +40,28 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving() {
+    this.#newPointComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#newPointComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#newPointComponent.shake(resetFormState);
+  }
+
   #handleFormSubmit = (update) => {
     this.#handleDataChange(UserAction.ADD_POINT, UpdateType.MAJOR, update);
-    this.destroy();
+
   };
 
   #escKeyDownHandler = (evt) => {
