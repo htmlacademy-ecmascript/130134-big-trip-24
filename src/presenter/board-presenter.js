@@ -5,8 +5,8 @@ import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
-import { sortPointsByTime, sortPointsByPrice } from '../utils/point.js';
-import { SortItems, UpdateType, UserAction, FilterType } from '../const.js';
+import { sortPointsByDate, sortPointsByTime, sortPointsByPrice } from '../utils/point.js';
+import { SortItemType, UpdateType, UserAction, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
 import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
@@ -28,7 +28,7 @@ export default class BoardPresenter {
   #handleLoadingFailed = null;
   #pointPresenters = new Map();
   #newPointPresenter = null;
-  #currentSortType = SortItems.DEFAULT.name;
+  #currentSortType = SortItemType.DEFAULT.name;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
   #uiBlocker = new UiBlocker({
@@ -58,12 +58,12 @@ export default class BoardPresenter {
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
-      case SortItems.TIME.name:
+      case SortItemType.TIME.name:
         return [...filteredPoints].sort(sortPointsByTime);
-      case SortItems.PRICE.name:
+      case SortItemType.PRICE.name:
         return [...filteredPoints].sort(sortPointsByPrice);
       default:
-        return filteredPoints;
+        return [...filteredPoints].sort(sortPointsByDate);
     }
   }
 
@@ -80,9 +80,89 @@ export default class BoardPresenter {
   }
 
   createPoint() {
-    this.#currentSortType = SortItems.DEFAULT.name;
+    this.#currentSortType = SortItemType.DEFAULT.name;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init(this.offers, this.destinations);
+  }
+
+  #renderBoard() {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
+    if (this.destinations.length === 0 || this.offers.length === 0) {
+      this.#renderFailedLoad();
+      return;
+    }
+
+    if (this.points.length === 0) {
+      this.#renderNoPoints();
+      return;
+    }
+
+    this.#renderSort();
+    render(this.#pointsListComponent, this.#mainContainer);
+
+    this.points.forEach((point) => {
+      this.#renderPoint(point);
+    });
+  }
+
+  #clearBoard({ resetSortType = false } = {}) {
+    this.#newPointPresenter.destroy();
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+
+    if (this.#loadingComponent) {
+      remove(this.#loadingComponent);
+    }
+
+    remove(this.#sortComponent);
+
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
+
+    if (resetSortType) {
+      this.#currentSortType = SortItemType.DEFAULT.name;
+    }
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#mainContainer);
+  }
+
+  #renderPoint(point) {
+    const pointPresenter = new PointPresenter({
+      pointsListContainer: this.#pointsListComponent.element,
+      onDataChange: this.#handleViewAction,
+      onModeChange: this.#handleModeChange,
+    });
+    pointPresenter.init(point, this.offers, this.destinations);
+    this.#pointPresenters.set(point.id, pointPresenter);
+  }
+
+  #renderFailedLoad() {
+    this.#handleLoadingFailed();
+    render(this.#failedLoadComponent, this.#mainContainer);
+  }
+
+  #renderNoPoints() {
+    this.#noPointsComponent = new NoPointView({
+      filterType: this.#filterType,
+    });
+
+    render(this.#noPointsComponent, this.#mainContainer);
+  }
+
+  #renderSort() {
+    this.#sortComponent = new SortView({
+      currentSort: this.#currentSortType,
+      onSortTypeChange: this.#handleSortTypeChange,
+    });
+
+    render(this.#sortComponent, this.#mainContainer);
   }
 
   #handleModeChange = () => {
@@ -144,77 +224,6 @@ export default class BoardPresenter {
     }
   };
 
-  #renderBoard() {
-    if (this.#isLoading) {
-      this.#renderLoading();
-      return;
-    }
-
-    if (this.destinations.length === 0 || this.offers.length === 0) {
-      this.#renderFailedLoad();
-      return;
-    }
-
-    if (this.points.length === 0) {
-      this.#renderNoPoints();
-      return;
-    }
-
-    this.#renderSort();
-    render(this.#pointsListComponent, this.#mainContainer);
-
-    this.points.forEach((point) => {
-      this.#renderPoint(point);
-    });
-  }
-
-  #clearBoard({ resetSortType = false } = {}) {
-    this.#newPointPresenter.destroy();
-    this.#pointPresenters.forEach((presenter) => presenter.destroy());
-    this.#pointPresenters.clear();
-
-    if (this.#loadingComponent) {
-      remove(this.#loadingComponent);
-    }
-
-    remove(this.#sortComponent);
-
-    if (this.#noPointsComponent) {
-      remove(this.#noPointsComponent);
-    }
-
-    if (resetSortType) {
-      this.#currentSortType = SortItems.DEFAULT.name;
-    }
-  }
-
-  #renderLoading() {
-    render(this.#loadingComponent, this.#mainContainer);
-  }
-
-  #renderPoint(point) {
-    const pointPresenter = new PointPresenter({
-      pointsListContainer: this.#pointsListComponent.element,
-      onDataChange: this.#handleViewAction,
-      onModeChange: this.#handleModeChange,
-    });
-    pointPresenter.init(point, this.offers, this.destinations);
-    this.#pointPresenters.set(point.id, pointPresenter);
-  }
-
-  #renderFailedLoad() {
-    this.#handleLoadingFailed();
-    render(this.#failedLoadComponent, this.#mainContainer);
-  }
-
-  #renderNoPoints() {
-    this.#noPointsComponent = new NoPointView({
-      filterType: this.#filterType,
-    });
-
-    render(this.#noPointsComponent, this.#mainContainer);
-  }
-
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
@@ -225,13 +234,4 @@ export default class BoardPresenter {
     this.#clearBoard();
     this.#renderBoard();
   };
-
-  #renderSort() {
-    this.#sortComponent = new SortView({
-      currentSort: this.#currentSortType,
-      onSortTypeChange: this.#handleSortTypeChange,
-    });
-
-    render(this.#sortComponent, this.#mainContainer);
-  }
 }

@@ -4,6 +4,7 @@ import BoardPresenter from './presenter/board-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
+import TripInfoPresenter from './presenter/trip-info-presenter.js';
 import NewPointButtonView from './view/new-point-button-view.js';
 import PointsApiService from './point-api-service.js';
 
@@ -32,6 +33,11 @@ const filterPresenter = new FilterPresenter({
   pointsModel,
 });
 
+const tripInfoPresenter = new TripInfoPresenter({
+  tripInfoContainer: controlsElement,
+  pointsModel,
+});
+
 const newPointButtonComponent = new NewPointButtonView({
   onClick: handleNewPointButtonClick,
 });
@@ -49,6 +55,7 @@ function handleLoadingFailed() {
   newPointButtonComponent.element.disabled = true;
 }
 
+tripInfoPresenter.init();
 filterPresenter.init();
 boardPresenter.init();
 pointsModel.init().finally(() => {

@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view';
 import {getCapitalizedValue} from '../utils/common.js';
-import { SortItems } from '../const.js';
+import { SortItemType } from '../const.js';
 
 function createSortItemsTemplate(sortItems, currentSort) {
   return Object.values(sortItems).reduce((acc, sort) => {
@@ -14,7 +14,7 @@ function createSortItemsTemplate(sortItems, currentSort) {
 
 function createSortTemplate(currentSort) {
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-    ${createSortItemsTemplate(SortItems, currentSort)}
+    ${createSortItemsTemplate(SortItemType, currentSort)}
 
     </form>`;
 }

@@ -126,14 +126,15 @@ export default class PointPresenter {
   }
 
   #handleFormSubmit = (update) => {
-    const isMinorUpdate =
+    const isMajorUpdate =
       !isDatesEqual(this.#point.dateFrom, update.dateFrom) ||
       !isDatesEqual(this.#point.dateTo, update.dateTo) ||
-      this.#point.basePrice !== update.basePrice;
+      this.#point.basePrice !== update.basePrice ||
+      this.#point.destination !== update.destination;
 
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      isMajorUpdate ? UpdateType.MAJOR : UpdateType.PATCH,
       update
     );
   };
@@ -156,7 +157,7 @@ export default class PointPresenter {
   };
 
   #handleDeleteClick = (point) => {
-    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MINOR, point);
+    this.#handleDataChange(UserAction.DELETE_POINT, UpdateType.MAJOR, point);
   };
 
   #handleFavoriteClick = () => {

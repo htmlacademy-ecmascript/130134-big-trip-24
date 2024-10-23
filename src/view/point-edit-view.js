@@ -234,6 +234,31 @@ export default class PointEditView extends AbstractStatefulView {
     this.#setDatepickers();
   }
 
+  #setDatepickers() {
+    this.#datepickerStart = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        enableTime: true,
+        'time_24hr': true,
+        dateFormat: 'd/m/y H:i',
+        maxDate: this._state.dateTo,
+        defaultDate: this._state.dateFrom,
+        onChange: this.#startTimeFocusoutHandler,
+      },
+    );
+    this.#datepickerEnd = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        'time_24hr': true,
+        dateFormat: 'd/m/y H:i',
+        minDate: this._state.dateFrom,
+        defaultDate: this._state.dateTo,
+        onChange: this.#endTimeFocusoutHandler,
+      },
+    );
+  }
+
   #offersClickHandler = (evt) => {
     if (!evt.target.classList.contains('event__offer-checkbox')) {
       return;
@@ -315,31 +340,6 @@ export default class PointEditView extends AbstractStatefulView {
     });
     this.#datepickerStart.set('maxDate', userDate[0]);
   };
-
-  #setDatepickers() {
-    this.#datepickerStart = flatpickr(
-      this.element.querySelector('#event-start-time-1'),
-      {
-        enableTime: true,
-        'time_24hr': true,
-        dateFormat: 'd/m/y H:i',
-        maxDate: this._state.dateTo,
-        defaultDate: this._state.dateFrom,
-        onChange: this.#startTimeFocusoutHandler,
-      },
-    );
-    this.#datepickerEnd = flatpickr(
-      this.element.querySelector('#event-end-time-1'),
-      {
-        enableTime: true,
-        'time_24hr': true,
-        dateFormat: 'd/m/y H:i',
-        minDate: this._state.dateFrom,
-        defaultDate: this._state.dateTo,
-        onChange: this.#endTimeFocusoutHandler,
-      },
-    );
-  }
 
   static parsePointtoState(point) {
     return {
