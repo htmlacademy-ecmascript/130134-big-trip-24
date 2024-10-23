@@ -5,7 +5,7 @@ import SortView from '../view/sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
-import { sortPointsByTime, sortPointsByPrice } from '../utils/point.js';
+import { sortPointsByDate, sortPointsByTime, sortPointsByPrice } from '../utils/point.js';
 import { SortItems, UpdateType, UserAction, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
 import LoadingView from '../view/loading-view.js';
@@ -63,7 +63,7 @@ export default class BoardPresenter {
       case SortItems.PRICE.name:
         return [...filteredPoints].sort(sortPointsByPrice);
       default:
-        return filteredPoints;
+        return [...filteredPoints].sort(sortPointsByDate);
     }
   }
 

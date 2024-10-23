@@ -1,4 +1,5 @@
 import { render, replace, remove, RenderPosition } from '../framework/render.js';
+import { UpdateType } from '../const.js';
 import TripInfoView from '../view/trip-info-view.js';
 
 export default class TripInfoPresenter {
@@ -15,20 +16,14 @@ export default class TripInfoPresenter {
   }
 
   init() {
-    console.log(this.#pointsModel.points);
-    const prevTripInfoComponent = this.#tripInfoComponent;
-    console.log('prev-component before code -'+prevTripInfoComponent);
+    let prevTripInfoComponent = this.#tripInfoComponent;
     if (this.#pointsModel.points.length === 0) {
-      remove(this.#tripInfoComponent);
       remove(prevTripInfoComponent);
+      remove(this.#tripInfoComponent);
+      prevTripInfoComponent = null;
+      this.#tripInfoComponent = null;
       return;
     }
-
-    console.log('length not 0');
-    
-    
-    console.log(prevTripInfoComponent);
-    
 
     this.#tripInfoComponent = new TripInfoView({
       points: this.#pointsModel.points,
@@ -37,18 +32,17 @@ export default class TripInfoPresenter {
     });
 
     if (prevTripInfoComponent === null) {
-      console.log('try render');
-      
       render(this.#tripInfoComponent, this.#tripInfoContainer, RenderPosition.AFTERBEGIN);
       return;
     }
 
-    console.log('try replaceee!!!');
     replace(this.#tripInfoComponent, prevTripInfoComponent);
     remove(prevTripInfoComponent);
   }
 
-  #handleModelEvent = () => {
-    this.init();
+  #handleModelEvent = (eventType) => {
+    if (eventType === UpdateType.MAJOR || eventType === UpdateType.INIT) {
+      this.init();
+    }
   };
 }
