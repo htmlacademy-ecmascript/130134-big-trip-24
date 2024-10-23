@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 
 function sortPointsByDate(dateA, dateB) {
-  return dayjs(dateB.dateFrom).diff(dayjs(dateA.dateFrom));
+  return dayjs(dateA.dateFrom).diff(dayjs(dateB.dateFrom));
 }
 
 function sortPointsByTime(timeA, timeB) {

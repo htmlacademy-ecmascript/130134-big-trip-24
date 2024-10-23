@@ -31,8 +31,8 @@ function getRouteTemplate(points, destinations) {
 }
 
 function getDatesTemplate(points) {
-  const dateStart = points[points.length - 1].dateFrom;
-  const dateEnd = points[0].dateTo;
+  const dateStart = points[0].dateFrom;
+  const dateEnd = points[points.length - 1].dateTo;
   const isOneMonthDuration = humanizeDate(dateStart, 'M') === humanizeDate(dateEnd, 'M');
 
   return isOneMonthDuration ?

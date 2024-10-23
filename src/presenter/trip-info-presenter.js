@@ -19,7 +19,6 @@ export default class TripInfoPresenter {
 
   init() {
     this.#points = [...this.#pointsModel.points].sort(sortPointsByDate);
-    console.log(this.#points);
 
     let prevTripInfoComponent = this.#tripInfoComponent;
     if (this.#points.length === 0) {
