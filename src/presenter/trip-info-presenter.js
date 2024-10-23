@@ -1,10 +1,12 @@
 import { render, replace, remove, RenderPosition } from '../framework/render.js';
 import { UpdateType } from '../const.js';
+import { sortPointsByDate } from '../utils/point.js';
 import TripInfoView from '../view/trip-info-view.js';
 
 export default class TripInfoPresenter {
   #tripInfoContainer = null;
   #pointsModel = null;
+  #points = [];
 
   #tripInfoComponent = null;
 
@@ -16,8 +18,11 @@ export default class TripInfoPresenter {
   }
 
   init() {
+    this.#points = [...this.#pointsModel.points].sort(sortPointsByDate);
+    console.log(this.#points);
+
     let prevTripInfoComponent = this.#tripInfoComponent;
-    if (this.#pointsModel.points.length === 0) {
+    if (this.#points.length === 0) {
       remove(prevTripInfoComponent);
       remove(this.#tripInfoComponent);
       prevTripInfoComponent = null;
@@ -26,7 +31,7 @@ export default class TripInfoPresenter {
     }
 
     this.#tripInfoComponent = new TripInfoView({
-      points: this.#pointsModel.points,
+      points: this.#points,
       offers: this.#pointsModel.offers,
       destinations: this.#pointsModel.destinations,
     });

@@ -1,7 +1,6 @@
 import AbstractView from '../framework/view/abstract-view';
 import { humanizeDate } from '../utils/common.js';
 
-
 function getRouteTemplate(points, destinations) {
   if (points.length > 3) {
     const pointStartId = points[0].destination;
@@ -32,8 +31,8 @@ function getRouteTemplate(points, destinations) {
 }
 
 function getDatesTemplate(points) {
-  const dateStart = points[0].dateFrom;
-  const dateEnd = points[points.length - 1].dateTo;
+  const dateStart = points[points.length - 1].dateFrom;
+  const dateEnd = points[0].dateTo;
   const isOneMonthDuration = humanizeDate(dateStart, 'M') === humanizeDate(dateEnd, 'M');
 
   return isOneMonthDuration ?
